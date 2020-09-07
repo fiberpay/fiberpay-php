@@ -1,0 +1,6 @@
+{
+    "name": "fiberpay/fiberpay-php",
+    "type": "library",
+    "license": "MIT",
+    "require": {}
+}

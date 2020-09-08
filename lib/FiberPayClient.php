@@ -58,17 +58,29 @@ class FiberPayClient {
         return hash_hmac('sha512', $toBeSigned, $apiSecret);
     }
 
+    private function addCallbackData(array $data, string $callbackUrl = null, $callbackParams = null) {
+        if(!empty($callbackUrl)) {
+            $data['callbackUrl'] = $callbackUrl;
+            if(!empty($callbackParams))
+                $data['callbackParams'] = $callbackParams;
+        }
 
-    public function createSplit() {
-        $data['currency'] = 'PLN';
-
-        $httpMethod = 'post';
-        $uri = "/api/$this->version/orders/split";
-
-        return $this->call($httpMethod, $uri, $data);
+        return $data;
     }
 
-    public function addSplitItem($orderCode, $amount, $currency, $toName, $toIban, $description, $callbackUrl = null) {
+    //FiberSplit methods
+
+    public function createSplit($currency = 'PLN') {
+        $data['currency'] = $currency;
+
+        $uri = "/api/$this->version/orders/split";
+
+        return $this->call('post', $uri, $data);
+    }
+
+    public function addSplitItem($orderCode, $toName, $toIban, $description, $amount,
+                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null) {
+
         $data = [
             'amount' => $amount,
             'currency' => $currency,
@@ -78,36 +90,121 @@ class FiberPayClient {
             'description' => $description,
         ];
 
-        if(!empty($callbackUrl)) {
-            $data['callbackUrl'] = $callbackUrl;
-        }
+        $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
 
-        $httpMethod = 'post';
         $uri = "/api/$this->version/orders/split/item";
 
-        return $this->call($httpMethod, $uri, $data);
+        return $this->call('post', $uri, $data);
     }
 
     public function endDefinitionOfSplit($orderCode) {
-        $httpMethod = 'put';
         $uri = "/api/$this->version/orders/split/$orderCode/define";
 
-        return $this->call($httpMethod, $uri);
+        return $this->call('put', $uri);
     }
 
     public function getSplitOrderInfo($orderCode) {
-        $httpMethod = 'get';
         $uri = "/api/$this->version/orders/split/$orderCode";
 
-        return $this->call($httpMethod, $uri);
+        return $this->call('get', $uri);
     }
 
     public function getSplitOrderItemInfo($orderItemCode) {
-        $httpMethod = 'get';
         $uri = "/api/$this->version/orders/split/item/$orderItemCode";
 
-        return $this->call($httpMethod, $uri);
+        return $this->call('get', $uri);
     }
 
+    //FiberCollect methods
+
+    public function createCollect($toName, $toIban, $currency = 'PLN') {
+        $data = [
+            'currency' => $currency,
+            'toName' => $toName,
+            'toIban' => $toIban,
+        ];
+
+        $uri = "/api/$this->version/orders/collect";
+
+        return $this->call('post', $uri, $data);
+    }
+
+    public function addCollectItem($orderCode, $description, $amount, $currency = 'PLN',
+                                   $callbackUrl = null, $callbackParams = null) {
+        $data = [
+            'amount' => $amount,
+            'currency' => $currency,
+            'description' => $description,
+            'parentOrder' => $orderCode,
+        ];
+
+        $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
+
+        $uri = "/api/$this->version/orders/collect/item";
+
+        return $this->call('post', $uri, $data);
+    }
+
+    public function getCollectOrderInfo($orderCode) {
+        $uri = "/api/$this->version/orders/collect/$orderCode";
+
+        return $this->call('get', $uri);
+    }
+
+    public function getCollectOrderItemInfo($orderItemCode) {
+        $uri = "/api/$this->version/orders/collect/item/$orderItemCode";
+
+        return $this->call('get', $uri);
+    }
+
+    //FiberDirect methods
+
+    public function createDirect($toName, $toIban, $description, $amount,
+                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null) {
+        $data = [
+            'amount' => $amount,
+            'currency' => $currency,
+            'toName' => $toName,
+            'toIban' => $toIban,
+            'description' => $description,
+        ];
+
+        $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
+
+        $uri = "/api/$this->version/orders/direct";
+
+        return $this->call('post', $uri, $data);
+    }
+
+    public function getDirectOrderInfo($orderCode) {
+        $uri = "/api/$this->version/orders/direct/$orderCode";
+
+        return $this->call('get', $uri);
+    }
+
+    //FiberForward methods
+
+    public function createForward($toName, $toIban, $description, $amount,
+                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null) {
+        $data = [
+            'amount' => $amount,
+            'currency' => $currency,
+            'toName' => $toName,
+            'toIban' => $toIban,
+            'description' => $description,
+        ];
+
+        $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
+
+        $uri = "/api/$this->version/orders/forward";
+
+        return $this->call('post', $uri, $data);
+    }
+
+    public function getForwardOrderInfo($orderCode) {
+        $uri = "/api/$this->version/orders/forward/$orderCode";
+
+        return $this->call('get', $uri);
+    }
 
 }

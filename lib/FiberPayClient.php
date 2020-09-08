@@ -4,19 +4,20 @@ namespace FiberPay;
 
 class FiberPayClient {
 
-    private $apiUrl = 'https://apitest.fiberpay.pl';
     private $version = '1.0';
+    private $apiUrl;
 
     protected $apiKey;
     protected $apiSecret;
 
-    public function __construct($apiKey, $apiSecret) {
+    public function __construct($apiKey, $apiSecret, $testServer = false) {
+        $this->apiUrl = $testServer ? 'https://apitest.fiberpay.pl' : 'https://api.fiberpay.pl';
+
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
     }
 
     private function call($httpMethod, $uri, $data = null){
-
         $headers = $this->createHeaders($httpMethod, $uri, $data);
 
         $curl = curl_init();
@@ -67,8 +68,19 @@ class FiberPayClient {
         return $this->call($httpMethod, $uri, $data);
     }
 
-    public function addSplitItem() {
-        $data['TODO'] = 'PLN';
+    public function addSplitItem($orderCode, $amount, $currency, $toName, $toIban, $description, $callbackUrl = null) {
+        $data = [
+            'amount' => $amount,
+            'currency' => $currency,
+            'parentCode' => $orderCode,
+            'toName' => $toName,
+            'toIban' => $toIban,
+            'description' => $description,
+        ];
+
+        if(!empty($callbackUrl)) {
+            $data['callbackUrl'] = $callbackUrl;
+        }
 
         $httpMethod = 'post';
         $uri = "/api/$this->version/orders/split/item";

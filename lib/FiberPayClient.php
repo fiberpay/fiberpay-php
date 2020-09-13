@@ -24,18 +24,30 @@ class FiberPayClient {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_URL, $this->apiUrl . $uri);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
-        if($httpMethod === 'post'){
+        if ($httpMethod === 'post'){
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+        } else if ($httpMethod === 'put') {
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
         }
+
         $response = curl_exec($curl);
+
+        if (curl_errno($curl))
+            $errorMsg = curl_error($curl);
+
+        curl_close($curl);
+
+        if (isset($errorMsg))
+            throw new \Exception($errorMsg);
+
         return $response;
     }
 
     private function createHeaders($httpMethod, $uri, $data = null){
-        $nonce = explode(' ', microtime());
-        $nonce = $nonce[1] . substr($nonce[0], 2);
+        $nonce = $this->nonce();
 
         $route = implode(' ', [strtoupper($httpMethod), $uri]);
 
@@ -51,6 +63,12 @@ class FiberPayClient {
         ];
 
         return $headers;
+    }
+
+    protected function nonce() {
+        $nonce = explode(' ', microtime());
+        $nonce = $nonce[1] . substr($nonce[0], 2);
+        return $nonce;
     }
 
     private function signature($route, $nonce, $apiKey, $data, $apiSecret) {
@@ -73,7 +91,7 @@ class FiberPayClient {
     public function createSplit($currency = 'PLN') {
         $data['currency'] = $currency;
 
-        $uri = "/api/$this->version/orders/split";
+        $uri = "/$this->version/orders/split";
 
         return $this->call('post', $uri, $data);
     }
@@ -92,25 +110,25 @@ class FiberPayClient {
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
 
-        $uri = "/api/$this->version/orders/split/item";
+        $uri = "/$this->version/orders/split/item";
 
         return $this->call('post', $uri, $data);
     }
 
     public function endDefinitionOfSplit($orderCode) {
-        $uri = "/api/$this->version/orders/split/$orderCode/define";
+        $uri = "/$this->version/orders/split/$orderCode/define";
 
         return $this->call('put', $uri);
     }
 
-    public function getSplitOrderInfo($orderCode) {
-        $uri = "/api/$this->version/orders/split/$orderCode";
+    public function getSplit($orderCode) {
+        $uri = "/$this->version/orders/split/$orderCode";
 
         return $this->call('get', $uri);
     }
 
-    public function getSplitOrderItemInfo($orderItemCode) {
-        $uri = "/api/$this->version/orders/split/item/$orderItemCode";
+    public function getSplitItem($orderItemCode) {
+        $uri = "/$this->version/orders/split/item/$orderItemCode";
 
         return $this->call('get', $uri);
     }
@@ -124,7 +142,7 @@ class FiberPayClient {
             'toIban' => $toIban,
         ];
 
-        $uri = "/api/$this->version/orders/collect";
+        $uri = "/$this->version/orders/collect";
 
         return $this->call('post', $uri, $data);
     }
@@ -140,19 +158,19 @@ class FiberPayClient {
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
 
-        $uri = "/api/$this->version/orders/collect/item";
+        $uri = "/$this->version/orders/collect/item";
 
         return $this->call('post', $uri, $data);
     }
 
     public function getCollectOrderInfo($orderCode) {
-        $uri = "/api/$this->version/orders/collect/$orderCode";
+        $uri = "/$this->version/orders/collect/$orderCode";
 
         return $this->call('get', $uri);
     }
 
     public function getCollectOrderItemInfo($orderItemCode) {
-        $uri = "/api/$this->version/orders/collect/item/$orderItemCode";
+        $uri = "/$this->version/orders/collect/item/$orderItemCode";
 
         return $this->call('get', $uri);
     }
@@ -171,13 +189,13 @@ class FiberPayClient {
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
 
-        $uri = "/api/$this->version/orders/direct";
+        $uri = "/$this->version/orders/direct";
 
         return $this->call('post', $uri, $data);
     }
 
     public function getDirectOrderInfo($orderCode) {
-        $uri = "/api/$this->version/orders/direct/$orderCode";
+        $uri = "/$this->version/orders/direct/$orderCode";
 
         return $this->call('get', $uri);
     }
@@ -196,13 +214,13 @@ class FiberPayClient {
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
 
-        $uri = "/api/$this->version/orders/forward";
+        $uri = "/$this->version/orders/forward";
 
         return $this->call('post', $uri, $data);
     }
 
     public function getForwardOrderInfo($orderCode) {
-        $uri = "/api/$this->version/orders/forward/$orderCode";
+        $uri = "/$this->version/orders/forward/$orderCode";
 
         return $this->call('get', $uri);
     }

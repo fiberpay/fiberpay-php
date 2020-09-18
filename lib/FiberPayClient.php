@@ -24,7 +24,6 @@ class FiberPayClient {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_URL, $this->apiUrl . $uri);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_FAILONERROR, true);
 
         if ($httpMethod === 'post'){
             curl_setopt($curl, CURLOPT_POST, true);
@@ -35,13 +34,16 @@ class FiberPayClient {
 
         $response = curl_exec($curl);
 
-        if (curl_errno($curl))
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        if($httpCode >= 500) {
             $errorMsg = curl_error($curl);
-
-        curl_close($curl);
-
-        if (isset($errorMsg))
             throw new \Exception($errorMsg);
+        }
+
+        if($response === false) {
+            return  curl_error($curl);
+        }
 
         return $response;
     }
@@ -55,6 +57,7 @@ class FiberPayClient {
         $signature = $this->signature($route, $nonce, $this->apiKey, $data, $this->apiSecret);
 
         $headers = [
+            "Accept: application/json",
             "Content-Type: application/json",
             "X-API-Key: $this->apiKey",
             "X-API-Nonce: $nonce",

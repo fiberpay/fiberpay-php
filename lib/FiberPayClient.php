@@ -89,10 +89,20 @@ class FiberPayClient {
         return $data;
     }
 
+    private function addMetadata(array $data, string $metadata = null){
+        if(!empty($metadata)){
+            $data['metadata'] = $metadata;
+        }
+
+        return $data;
+    }
+
     //FiberSplit methods
 
-    public function createSplit($currency = 'PLN') {
+    public function createSplit($currency = 'PLN', $metadata = null) {
         $data['currency'] = $currency;
+
+        $data = $this->addMetadata($data, $metadata);
 
         $uri = "/$this->version/orders/split";
 
@@ -100,7 +110,8 @@ class FiberPayClient {
     }
 
     public function addSplitItem($orderCode, $toName, $toIban, $description, $amount,
-                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null) {
+                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null, 
+                                 $metadata = null) {
 
         $data = [
             'amount' => $amount,
@@ -112,6 +123,7 @@ class FiberPayClient {
         ];
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
+        $data = $this->addMetadata($data, $metadata);
 
         $uri = "/$this->version/orders/split/item";
 
@@ -138,12 +150,14 @@ class FiberPayClient {
 
     //FiberCollect methods
 
-    public function createCollect($toName, $toIban, $currency = 'PLN') {
+    public function createCollect($toName, $toIban, $currency = 'PLN', $metadata = null) {
         $data = [
             'currency' => $currency,
             'toName' => $toName,
             'toIban' => $toIban,
         ];
+
+        $data = $this->addMetadata($data, $metadata);
 
         $uri = "/$this->version/orders/collect";
 
@@ -151,7 +165,8 @@ class FiberPayClient {
     }
 
     public function addCollectItem($orderCode, $description, $amount, $currency = 'PLN',
-                                   $callbackUrl = null, $callbackParams = null) {
+                                   $callbackUrl = null, $callbackParams = null, 
+                                   $metadata = null) {
         $data = [
             'amount' => $amount,
             'currency' => $currency,
@@ -160,6 +175,7 @@ class FiberPayClient {
         ];
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
+        $data = $this->addMetadata($data, $metadata);
 
         $uri = "/$this->version/orders/collect/item";
 
@@ -178,10 +194,17 @@ class FiberPayClient {
         return $this->call('get', $uri);
     }
 
+    public function deleteCollectOrderItem($orderItemCode) {
+        $uri = "/$this->version/orders/collect/item/$orderItemCode";
+
+        return $this->call('delete', $uri);
+    }
+
     //FiberDirect methods
 
     public function createDirect($toName, $toIban, $description, $amount,
-                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null) {
+                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null,
+                                 $metadata = null) {
         $data = [
             'amount' => $amount,
             'currency' => $currency,
@@ -191,6 +214,7 @@ class FiberPayClient {
         ];
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
+        $data = $this->addMetadata($data, $metadata);
 
         $uri = "/$this->version/orders/direct";
 
@@ -203,19 +227,31 @@ class FiberPayClient {
         return $this->call('get', $uri);
     }
 
+    public function deleteDirectOrder($orderCode) {
+        $uri = "/$this->version/orders/direct/$orderCode";
+
+        return $this->call('delete', $uri);
+    }
+
     //FiberForward methods
 
-    public function createForward($toName, $toIban, $description, $amount,
-                                 $currency = 'PLN', $callbackUrl = null, $callbackParams = null) {
+    public function createForward($targetName, $targetIban, $brokerName, $brokerIban, 
+                                 $description, $sourceAmount, $targetAmount,
+                                 $currency = 'PLN', $callbackUrl = null, 
+                                 $callbackParams = null, $metadata = null) {
         $data = [
-            'amount' => $amount,
+            'sourceAmount' => $sourceAmount,
+            'targetAmount' => $targetAmount,
             'currency' => $currency,
-            'toName' => $toName,
-            'toIban' => $toIban,
+            'targetName' => $targetName,
+            'targetIban' => $targetIban,
+            'brokerName' => $brokerName,
+            'brokerIban' => $brokerIban,
             'description' => $description,
         ];
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
+        $data = $this->addMetadata($data, $metadata);
 
         $uri = "/$this->version/orders/forward";
 
@@ -224,6 +260,20 @@ class FiberPayClient {
 
     public function getForwardOrderInfo($orderCode) {
         $uri = "/$this->version/orders/forward/$orderCode";
+
+        return $this->call('get', $uri);
+    }
+
+    //Settlements methods
+
+    public function getSettlements(){
+        $uri = "/$this->version/settlements";
+
+        return $this->call('get', $uri);
+    }
+
+    public function getSettlement($settlementCode){
+        $uri = "/$this->version/settlements/$settlementCode";
 
         return $this->call('get', $uri);
     }

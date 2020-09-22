@@ -171,7 +171,7 @@ class FiberPayClient {
             'amount' => $amount,
             'currency' => $currency,
             'description' => $description,
-            'parentOrder' => $orderCode,
+            'parentCode' => $orderCode,
         ];
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);

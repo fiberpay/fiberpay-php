@@ -14,7 +14,7 @@ function fiberSplitOrder() {
     global $client;
 
     /**         wymagane            */
-    $currency = 'PLN';
+    $currency = 'PLN';  // na chwilę obecną jedyna dostępna opcja
 
     /**         opcjonalnie         */
     $metadata = 'eg. Wypłata środków za okres styczeń - luty 2020';
@@ -39,7 +39,7 @@ function fiberSplitItem(){
     $parentCode = fiberSplitOrder(); /** w wersji przykładowej tworzy nowy FiberSplitOrder i pobiera jego kod
     np.  $parentCode = 'zc6ta75gfpme';  kod uzyskujemy po stworzeniu FiberSplitOrder                      **/
     $amount = 3650.50;
-    $currency = 'PLN';
+    $currency = 'PLN';  // na chwilę obecną jedyna dostępna opcja
     $toName = 'Jan Kowalski';
     $toIban = 'PL27114020040000300201355387';
     $description = 'Wynagrodzenie za miesiąc styczeń 2020';

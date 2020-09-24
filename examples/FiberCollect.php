@@ -12,42 +12,43 @@ $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
 function fiberCollectOrder(){
     global $client;
 
-    /**         wymagane            */
+    /** wymagane */
     $currency = 'PLN';      // na chwilę obecną jedyna dostępna opcja
     $toName = 'Krzysztof Nowak';
     $toIban = 'PL55378528945895859558835555';
 
-    /**         opcjonalnie         **/
+    /** opcjonalnie */
     $metadata = 'Środki przychodzące z filii w woj. Mazowieckim';
 
 
     $response = $client->createCollect($toName, $toIban, $currency, $metadata);
-    $json = json_decode($response, true);
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
-    $testPrintData = "------    fiberCollectOrder     ------".$response;
+    $testPrintData = "------    fiberCollectOrder     ------ ".$response;
     echo $testPrintData;
 
+    $json = json_decode($response, true);
     return $json['data']['code']; // zwraca code, który dalej jest traktowany jako parentCode
 }
 
 function fiberCollectItem(){
     global $client;
 
-    /**         wymagane            */
-    $parentCode = fiberCollectOrder();/** w wersji przykładowej tworzy nowy FiberCollectOrder i pobiera jego kod
-    np.  $parentCode = 'zc6ta75gfpme';  kod uzyskujemy po stworzeniu FiberCollectOrder                      **/
+    /** wymagane */
+    // w wersji przykładowej tworzy nowy FiberCollectOrder i pobiera jego kod
+    // np.  $parentCode = 'zc6ta75gfpme';  kod uzyskujemy po stworzeniu FiberCollectOrder
+    $parentCode = fiberCollectOrder();
     $description = "Tytuł przelewu";
     $amount = 324.50;
     $currency = 'PLN';  // na chwilę obecną jedyna dostępna opcja
 
-    /**         opcjonalnie         **/
+    /** opcjonalnie */
     $callbackUrl = 'https://your.api/callback';
     $callbackParams = 'callback params';
-    $metadata = 'additional information';
+    $metadata = 'dodatkowe informacje';
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po dodawaniu Itemu */
-    $testPrintData = "------    fiberCollectItems     ------";
+    $testPrintData = "------    fiberCollectItem     ------";
     $testPrintData .= $client->addCollectItem($parentCode, $description, $amount, $currency);
 
 

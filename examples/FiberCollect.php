@@ -23,8 +23,11 @@ function fiberCollectOrder(){
 
     $response = $client->createCollect($toName, $toIban, $currency, $metadata);
     $json = json_decode($response, true);
-    echo nl2br("------    fiberCollectOrder     ------");
-    echo $response;
+
+    /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
+    $testPrintData = "------    fiberCollectOrder     ------".$response;
+    echo $testPrintData;
+
     return $json['data']['code']; // zwraca code, który dalej jest traktowany jako parentCode
 }
 
@@ -44,8 +47,7 @@ function fiberCollectItem(){
     $metadata = 'additional information';
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po dodawaniu Itemu */
-    $testPrintData = "";
-    $testPrintData .= "------    fiberCollectItems     ------";
+    $testPrintData = "------    fiberCollectItems     ------";
     $testPrintData .= $client->addCollectItem($parentCode, $description, $amount, $currency);
 
 

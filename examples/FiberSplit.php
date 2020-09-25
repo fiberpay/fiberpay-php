@@ -22,10 +22,10 @@ function fiberSplitOrder() {
 
     $response = $client->createSplit($currency);
     /** z wykorzystaniem opcjonalnych parametrów */
-    $responseCase2 = $client->createSplit($currency, $metadata);
+    $responseOptional = $client->createSplit($currency, $metadata);
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
-    $testPrintData = "------    fiberSplitOrder     ------".$response;
+    $testPrintData = "------    fiberSplitOrder     ------"."\n".$response;
     echo $testPrintData;
 
     $json = json_decode($response, true);
@@ -54,11 +54,11 @@ function fiberSplitItem(){
 
     $response = $client->addSplitItem($parentCode, $toName, $toIban, $description, $amount, $currency);
     /** z wykorzystaniem opcjonalnych parametrów */
-    $responseCase2 = $client->addSplitItem($parentCode, $toName, $toIban, $description, $amount,
+    $responseOptional = $client->addSplitItem($parentCode, $toName, $toIban, $description, $amount,
             $currency, $callbackUrl, $callbackParams, $metadata);
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po dodawaniu Itemu */
-    $testPrintData = "------    fiberSplitItem      ------";
+    $testPrintData = "\n"."------    fiberSplitItem      ------"."\n";
     $testPrintData .= $response;
 
 
@@ -87,7 +87,7 @@ function fiberSplitDefine(){
 
 
     $response = $client->endDefinitionOfSplit($parentCode);
-    echo "------    fiberSplitDefine     ------".$response;
+    echo "\n"."------    fiberSplitDefine     ------"."\n".$response;
 }
 
 fiberSplitDefine();

@@ -24,7 +24,7 @@ function fiberCollectOrder(){
     $response = $client->createCollect($toName, $toIban, $currency, $metadata);
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
-    $testPrintData = "------    fiberCollectOrder     ------ ".$response;
+    $testPrintData = "------    fiberCollectOrder     ------ "."\n".$response;
     echo $testPrintData;
 
     $json = json_decode($response, true);
@@ -48,7 +48,7 @@ function fiberCollectItem(){
     $metadata = 'dodatkowe informacje';
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po dodawaniu Itemu */
-    $testPrintData = "------    fiberCollectItem     ------";
+    $testPrintData = "\n"."------    fiberCollectItem     ------"."\n";
     $testPrintData .= $client->addCollectItem($parentCode, $description, $amount, $currency);
 
 

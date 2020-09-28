@@ -2,10 +2,25 @@
 
 require_once realpath(dirname(__FILE__)) . '../../lib/FiberPayClient.php';
 
+
 $apiKey = 'twój klucz publiczny';
 $apiSecret = 'twój klucz prywatny';
 
 $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
+
+
+
+
+/** symuluje proces tworzenia przelewu */
+fiberDirect();
+
+
+/***********************************************************
+ *                                                         *
+ *                      Funkcje                            *
+ *                                                         *
+ **********************************************************/
+
 
 function fiberDirect(){
     global $client;
@@ -26,7 +41,5 @@ function fiberDirect(){
     $responseOptional = $client->createDirect($toName, $toIban, $description, $amount, $currency, $callbackUrl, $callbackParams, $metadata);
 
     echo "------    fiberDirect     ------"."\n".$response;
-
 }
 
-fiberDirect();

@@ -8,28 +8,19 @@ $apiSecret = 'twój klucz prywatny';
 
 $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
 
-    /** tworzy FiberCollectOrder oraz pobiera orderCode potrzebny w kolejnych etapach */
-function fiberCollectOrder(){
-    global $client;
-
-    /** wymagane */
-    $currency = 'PLN';      // na chwilę obecną jedyna dostępna opcja
-    $toName = 'Krzysztof Nowak';
-    $toIban = 'PL55378528945895859558835555';
-
-    /** opcjonalnie */
-    $metadata = 'Środki przychodzące z filii w woj. Mazowieckim';
 
 
-    $response = $client->createCollect($toName, $toIban, $currency, $metadata);
 
-    /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
-    $testPrintData = "------    fiberCollectOrder     ------ "."\n".$response;
-    echo $testPrintData;
+/**  symuluje proces tworzenia Orderu oraz tworzenia i dodania do niego czterech przykładowych Itemów */
+fiberCollectItem();
 
-    $json = json_decode($response, true);
-    return $json['data']['code']; // zwraca code, który dalej jest traktowany jako parentCode
-}
+
+/***********************************************************
+ *                                                         *
+ *                      Funkcje                            *
+ *                                                         *
+ **********************************************************/
+
 
 function fiberCollectItem(){
     global $client;
@@ -60,7 +51,31 @@ function fiberCollectItem(){
     echo $testPrintData;
 }
 
-fiberCollectItem();
+    /** tworzy FiberCollectOrder oraz pobiera orderCode potrzebny w kolejnych etapach */
+function fiberCollectOrder(){
+    global $client;
+
+    /** wymagane */
+    $currency = 'PLN';      // na chwilę obecną jedyna dostępna opcja
+    $toName = 'Krzysztof Nowak';
+    $toIban = 'PL55378528945895859558835555';
+
+    /** opcjonalnie */
+    $metadata = 'Środki przychodzące z filii w woj. Mazowieckim';
+
+    $response = $client->createCollect($toName, $toIban, $currency, $metadata);
+
+    /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
+    $testPrintData = "------    fiberCollectOrder     ------ "."\n".$response;
+    echo $testPrintData;
+
+    $json = json_decode($response, true);
+    return $json['data']['code']; // zwraca code, który dalej jest traktowany jako parentCode
+}
+
+
+
+
 
 
 

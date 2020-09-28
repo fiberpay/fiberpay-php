@@ -33,7 +33,7 @@ class FiberPayClient {
         }
 
         $response = curl_exec($curl);
-var_dump($response);
+
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         if($httpCode >= 500) {
@@ -254,7 +254,6 @@ var_dump($response);
         $data = $this->addMetadata($data, $metadata);
 
         $uri = "/$this->version/orders/forward";
-        var_dump($uri);
 
         return $this->call('post', $uri, $data);
     }

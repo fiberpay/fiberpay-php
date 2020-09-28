@@ -2,10 +2,25 @@
 
 require_once realpath(dirname(__FILE__)) . '../../lib/FiberPayClient.php';
 
+
 $apiKey = 'twój klucz publiczny';
 $apiSecret = 'twój klucz prywatny';
 
 $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
+
+
+
+
+/** symuluje proces usługi FiberForward */
+fiberForward();
+
+
+/***********************************************************
+ *                                                         *
+ *                      Funkcje                            *
+ *                                                         *
+ **********************************************************/
+
 
 function fiberForward(){
     global $client;
@@ -35,4 +50,4 @@ function fiberForward(){
 
 }
 
-fiberForward();
+

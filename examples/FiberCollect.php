@@ -3,8 +3,8 @@
 require_once realpath(dirname(__FILE__)) . '../../lib/FiberPayClient.php';
 
 
-$apiKey = 'twój klucz publiczny';
-$apiSecret = 'twój klucz prywatny';
+$apiKey = 'twój_klucz_jawny';
+$apiSecret = 'twój_klucz_tajny';
 
 $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
 

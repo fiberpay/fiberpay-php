@@ -3,8 +3,8 @@
 require_once realpath(dirname(__FILE__)) . '../../lib/FiberPayClient.php';
 
 
-$apiKey = 'twój klucz publiczny';
-$apiSecret = 'twój klucz prywatny';
+$apiKey = 'twój_klucz_jawny';
+$apiSecret = 'twój_klucz_tajny';
 
 $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
 
@@ -41,12 +41,12 @@ function fiberForward(){
     $metadata = 'dodatkowe informacje';
 
     // TODO : ForwardController w backendzie / do dodania sprawdzenie
-//    $response = $client->createForward($targetName, $targetIban,$brokerName,$brokerIban, $description, $sourceAmount, $targetAmount, $currency, "", "", "");
+    $response = $client->createForward($targetName, $targetIban,$brokerName,$brokerIban, $description, $sourceAmount, $targetAmount, $currency);
     $responseOptional = $client->createForward($targetName, $targetIban,$brokerName, $brokerIban, $description, $sourceAmount, $targetAmount,
         $currency, $callbackUrl, $callbackParams, $metadata);
 
-//    echo "------    fiberForward     ------"."\n".$response;
-    echo "------    fiberForward     ------"."\n".$responseOptional;
+    echo "------    fiberForward     ------"."\n".$response;
+//    echo "------    fiberForward     ------"."\n".$responseOptional;
 
 }
 

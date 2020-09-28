@@ -25,11 +25,12 @@ function fiberForward(){
     $callbackParams = 'callback params';
     $metadata = 'dodatkowe informacje';
 
-    $response = $client->createForward($targetName, $targetIban,$brokerName,$brokerIban, $description, $sourceAmount, $targetAmount, $currency, "", "", "");
+    // TODO : ForwardController w backendzie / do dodania sprawdzenie
+//    $response = $client->createForward($targetName, $targetIban,$brokerName,$brokerIban, $description, $sourceAmount, $targetAmount, $currency, "", "", "");
     $responseOptional = $client->createForward($targetName, $targetIban,$brokerName, $brokerIban, $description, $sourceAmount, $targetAmount,
         $currency, $callbackUrl, $callbackParams, $metadata);
 
-    echo "------    fiberForward     ------"."\n".$response;
+//    echo "------    fiberForward     ------"."\n".$response;
     echo "------    fiberForward     ------"."\n".$responseOptional;
 
 }

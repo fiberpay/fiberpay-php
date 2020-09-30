@@ -1,6 +1,6 @@
 <?php
 
-require_once realpath(dirname(__FILE__)) . '../../lib/FiberPayClient.php';
+use FiberPay\FiberPayClient;
 
 
 $apiKey = 'twój_klucz_jawny';

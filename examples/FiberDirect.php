@@ -22,7 +22,9 @@ $callbackParams = 'callback params';
 $metadata = 'dodatkowe informacje';
 
 $response = $client->createDirect($toName, $toIban, $description, $amount, $currency);
-$responseOptional = $client->createDirect($toName, $toIban, $description, $amount, $currency, $callbackUrl, $callbackParams, $metadata);
+$responseOptional = $client->createDirect(
+    $toName, $toIban, $description, $amount, $currency, $callbackUrl, $callbackParams, $metadata);
 
-echo "------    fiberDirect     ------\n" . $response;
+echo "------    fiberDirect     ------\n";
+echo $response;
 

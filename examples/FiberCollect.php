@@ -8,68 +8,33 @@ $apiSecret = 'twój_klucz_tajny';
 
 $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
 
+//Tworzymy zlecenie przyjmowania płatności (można mieć wiele, np. z wypłatami na różne konta)
+$response = $client->createCollect(
+    'Przykładowa sp. z o.o.','PL55378528945895859558835555', 'PLN',
+    'filia=mazowieckie');
+echo "$response\n";
 
-$parentCode = fiberCollectOrder($client);
-fiberCollectItem($client, $parentCode);
+$ret = json_decode($response, true);
+$parentCode =  $ret['data']['code'];
 
+echo "\n ------    items     ------ \n";
 
-/***********************************************************
- *                                                         *
- *                      Funkcje                            *
- *                                                         *
- **********************************************************/
+//dodajemy kolejne pozycje, które chcemy aby zostały opłacone (nie wszystkie muszą być opłacone)
 
-/** tworzy zlecenie oraz zwraca kod tego zlecenia (orderCode) potrzebny w kolejnych etapach */
-/**
- * @param FiberPayClient $client
- * @return mixed
- */
-function fiberCollectOrder($client){
+echo $client->addCollectItem($parentCode, "Opis płatności 1", 324.50);
+echo "\n";
 
-    /** wymagane */
-    $currency = 'PLN';      // na chwilę obecną jedyna dostępna opcja
-    $toName = 'Krzysztof Nowak';
-    $toIban = 'PL55378528945895859558835555';
+echo $client->addCollectItem($parentCode, "Opis płatności 2", 476.20, 'PLN',
+    'https://your.api/callback', 'mySuperOrderId=7');
+echo "\n";
 
-    /** opcjonalnie */
-    $metadata = 'Środki przychodzące z filii w woj. Mazowieckim';
+echo $client->addCollectItem($parentCode, "Opis płatności 3", 1578.94);
+echo "\n";
 
-    $response = $client->createCollect($toName, $toIban, $currency, $metadata);
+echo $client->addCollectItem($parentCode, "Opis płatności 4", 612.00, 'PLN',
+    'https://your.api/callback', 'mySuperOrderId=8');
+echo "\n";
 
-    /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
-    echo "------    fiberCollectOrder     ------ \n" . $response;
-
-    $json = json_decode($response, true);
-    return $json['data']['code']; // zwraca code, który dalej jest traktowany jako parentCode
-}
-
-
-/**
- * @param FiberPayClient $client
- * @param string $parentCode
- */
-function fiberCollectItem($client, $parentCode){
-
-    /** parametry wymagane */
-    $description = "Tytuł przelewu";
-    $amount = 324.50;
-    $currency = 'PLN';  // na chwilę obecną jedyna dostępna opcja
-
-    /** opcjonalnie */
-    $callbackUrl = 'https://your.api/callback';
-    $callbackParams = 'mySuperOrderId=7';
-    $metadata = 'clientHash=abc123';
-
-    /** dla celów testowych zostanie wyświetlony response otrzymany po dodawaniu Itemu */
-    echo "\n ------    fiberCollectItem     ------ \n";
-    echo $client->addCollectItem($parentCode, $description, $amount, $currency);
-
-
-    /** dla celów testowych tworzymy kilka dodatkowych Itemów do tego samego Orderu (czyli wykorzystując ten sam parentCode) */
-    echo $client->addCollectItem($parentCode, $description, 476.20, $currency, $callbackUrl, $callbackParams, $metadata);
-    echo $client->addCollectItem($parentCode, $description, 1578.94, $currency);
-    echo $client->addCollectItem($parentCode, $description, 612.00, $currency, $callbackUrl, $callbackParams, $metadata);
-}
 
 
 

@@ -1,6 +1,6 @@
 <?php
 
-require_once realpath(dirname(__FILE__)) . '../../lib/FiberPayClient.php';
+use FiberPay\FiberPayClient;
 
 
 $apiKey = 'twój_klucz_jawny';
@@ -9,10 +9,8 @@ $apiSecret = 'twój_klucz_tajny';
 $client = new \FiberPay\FiberPayClient($apiKey, $apiSecret, true);
 
 
-
-
-/**  symuluje proces tworzenia Orderu oraz tworzenia i dodania do niego czterech przykładowych Itemów */
-fiberCollectItem();
+$parentCode = fiberCollectOrder($client);
+fiberCollectItem($client, $parentCode);
 
 
 /***********************************************************
@@ -21,39 +19,12 @@ fiberCollectItem();
  *                                                         *
  **********************************************************/
 
-
-function fiberCollectItem(){
-    global $client;
-
-    /** wymagane */
-    // w wersji przykładowej tworzy nowy FiberCollectOrder i pobiera jego kod
-    // np.  $parentCode = 'zc6ta75gfpme';  kod uzyskujemy po stworzeniu FiberCollectOrder
-    $parentCode = fiberCollectOrder();
-    $description = "Tytuł przelewu";
-    $amount = 324.50;
-    $currency = 'PLN';  // na chwilę obecną jedyna dostępna opcja
-
-    /** opcjonalnie */
-    $callbackUrl = 'https://your.api/callback';
-    $callbackParams = 'callback params';
-    $metadata = 'dodatkowe informacje';
-
-    /** dla celów testowych zostanie wyświetlony response otrzymany po dodawaniu Itemu */
-    $testPrintData = "\n"."------    fiberCollectItem     ------"."\n";
-    $testPrintData .= $client->addCollectItem($parentCode, $description, $amount, $currency);
-
-
-    /** dla celów testowych tworzymy kilka dodatkowych Itemów do tego samego Orderu (czyli wykorzystując ten sam parentCode) */
-    $testPrintData .= $client->addCollectItem($parentCode, $description, 476.20, $currency, $callbackUrl, $callbackParams, $metadata);
-    $testPrintData .= $client->addCollectItem($parentCode, $description, 1578.94, $currency);
-    $testPrintData .= $client->addCollectItem($parentCode, $description, 612.00, $currency, $callbackUrl, $callbackParams, $metadata);
-
-    echo $testPrintData;
-}
-
-    /** tworzy FiberCollectOrder oraz pobiera orderCode potrzebny w kolejnych etapach */
-function fiberCollectOrder(){
-    global $client;
+/** tworzy zlecenie oraz zwraca kod tego zlecenia (orderCode) potrzebny w kolejnych etapach */
+/**
+ * @param FiberPayClient $client
+ * @return mixed
+ */
+function fiberCollectOrder($client){
 
     /** wymagane */
     $currency = 'PLN';      // na chwilę obecną jedyna dostępna opcja
@@ -66,12 +37,40 @@ function fiberCollectOrder(){
     $response = $client->createCollect($toName, $toIban, $currency, $metadata);
 
     /** dla celów testowych zostanie wyświetlony response otrzymany po stworzeniu Orderu */
-    $testPrintData = "------    fiberCollectOrder     ------ "."\n".$response;
-    echo $testPrintData;
+    echo "------    fiberCollectOrder     ------ \n" . $response;
 
     $json = json_decode($response, true);
     return $json['data']['code']; // zwraca code, który dalej jest traktowany jako parentCode
 }
+
+
+/**
+ * @param FiberPayClient $client
+ * @param string $parentCode
+ */
+function fiberCollectItem($client, $parentCode){
+
+    /** parametry wymagane */
+    $description = "Tytuł przelewu";
+    $amount = 324.50;
+    $currency = 'PLN';  // na chwilę obecną jedyna dostępna opcja
+
+    /** opcjonalnie */
+    $callbackUrl = 'https://your.api/callback';
+    $callbackParams = 'mySuperOrderId=7';
+    $metadata = 'clientHash=abc123';
+
+    /** dla celów testowych zostanie wyświetlony response otrzymany po dodawaniu Itemu */
+    echo "\n ------    fiberCollectItem     ------ \n";
+    echo $client->addCollectItem($parentCode, $description, $amount, $currency);
+
+
+    /** dla celów testowych tworzymy kilka dodatkowych Itemów do tego samego Orderu (czyli wykorzystując ten sam parentCode) */
+    echo $client->addCollectItem($parentCode, $description, 476.20, $currency, $callbackUrl, $callbackParams, $metadata);
+    echo $client->addCollectItem($parentCode, $description, 1578.94, $currency);
+    echo $client->addCollectItem($parentCode, $description, 612.00, $currency, $callbackUrl, $callbackParams, $metadata);
+}
+
 
 
 

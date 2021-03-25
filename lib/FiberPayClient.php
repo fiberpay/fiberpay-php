@@ -97,6 +97,14 @@ class FiberPayClient {
         return $data;
     }
 
+    private function addOptionalParameter(array $data, string $name, $value = null){
+        if(!empty($value)){
+            $data[$name] = $value;
+        }
+
+        return $data;
+    }
+
     //FiberSplit methods
 
     public function createSplit($currency = 'PLN', $metadata = null) {
@@ -238,7 +246,9 @@ class FiberPayClient {
     public function createForward($targetName, $targetIban, $brokerName, $brokerIban, 
                                  $description, $sourceAmount, $targetAmount,
                                  $currency = 'PLN', $callbackUrl = null, 
-                                 $callbackParams = null, $metadata = null) {
+                                 $callbackParams = null, $metadata = null,
+                                 $redirectUrl = null, $beforePaymentInfo = null, 
+                                 $afterPaymentInfo = null) {
         $data = [
             'sourceAmount' => $sourceAmount,
             'targetAmount' => $targetAmount,
@@ -252,6 +262,9 @@ class FiberPayClient {
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
         $data = $this->addMetadata($data, $metadata);
+        $data = $this->addOptionalParameter($data, 'redirectUrl', $redirectUrl);
+        $data = $this->addOptionalParameter($data, 'beforePaymentInfo', $beforePaymentInfo);
+        $data = $this->addOptionalParameter($data, 'afterPaymentInfo', $afterPaymentInfo);
 
         $uri = "/$this->version/orders/forward";
 

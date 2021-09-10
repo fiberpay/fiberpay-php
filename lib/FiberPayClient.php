@@ -174,7 +174,7 @@ class FiberPayClient {
 
     public function addCollectItem($orderCode, $description, $amount, $currency = 'PLN',
                                    $callbackUrl = null, $callbackParams = null, 
-                                   $metadata = null) {
+                                   $metadata = null, $redirectUrl = null) {
         $data = [
             'amount' => $amount,
             'currency' => $currency,
@@ -184,6 +184,9 @@ class FiberPayClient {
 
         $data = $this->addCallbackData($data, $callbackUrl, $callbackParams);
         $data = $this->addMetadata($data, $metadata);
+
+        $data = $this->addOptionalParameter($data, 'redirectUrl', $redirectUrl);
+
 
         $uri = "/$this->version/orders/collect/item";
 

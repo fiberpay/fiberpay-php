@@ -105,6 +105,10 @@ class FiberPayClient {
         return $data;
     }
 
+    public function setApiUrl($apiUrl) {
+        $this->apiUrl = $apiUrl;
+    }
+
     //FiberSplit methods
 
     public function createSplit($currency = 'PLN', $metadata = null) {
